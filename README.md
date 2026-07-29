@@ -31,35 +31,35 @@
   <td>🔷 标准版</td>
   <td>通用场景</td>
   <td>灰蓝左面板 · 四色几何角色</td>
-  <td align="center">—</td>
+  <td align="center"><a href="https://sidaotiger.github.io/AIAgentLogin/login.html">预览</a></td>
 </tr>
 <tr>
   <td><code>login-premium.html</code></td>
   <td>🥂 高端版</td>
   <td>商务 · 品牌</td>
   <td>暗夜黑底 · 晶石 · 香槟金描边</td>
-  <td align="center">—</td>
+  <td align="center"><a href="https://sidaotiger.github.io/AIAgentLogin/login-premium.html">预览</a></td>
 </tr>
 <tr>
   <td><code>login-kids.html</code></td>
   <td>🌈 儿童版</td>
   <td>幼儿园 · 小学</td>
   <td>渐变天空 · 云朵星星 · 超萌大头</td>
-  <td align="center">—</td>
+  <td align="center"><a href="https://sidaotiger.github.io/AIAgentLogin/login-kids.html">预览</a></td>
 </tr>
 <tr>
   <td><code>login-student.html</code></td>
   <td>📐 学生版</td>
   <td>中学 · 大学</td>
   <td>深色网格 · 几何拼接 · 白色卡片</td>
-  <td align="center">—</td>
+  <td align="center"><a href="https://sidaotiger.github.io/AIAgentLogin/login-student.html">预览</a></td>
 </tr>
 <tr>
   <td><code>login-pro.html</code></td>
   <td>🎓 儿童 Pro</td>
   <td>小学 · 教育机构</td>
   <td>粉紫渐变 · 学士帽 · 配饰角色</td>
-  <td align="center">—</td>
+  <td align="center"><a href="https://sidaotiger.github.io/AIAgentLogin/login-pro.html">预览</a></td>
 </tr>
 </table>
 
