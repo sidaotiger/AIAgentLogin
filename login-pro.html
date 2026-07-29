@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智趣AI学堂 - 登录</title>
+    <style>
+        /* 🎨 儿童版色彩主题变量 */
+        :root {
+            --bg-left: linear-gradient(160deg, #a18cd1 0%, #fbc2eb 100%);
+            --bg-right: #fff9fc; /* 极浅的粉白 */
+            
+            --input-border: #ffc6d1;
+            --input-focus-border: #f093fb;
+            --btn-primary-bg: linear-gradient(120deg, #f6d365 0%, #fda085 100%);
+            
+            --text-main: #4a4a4a;
+            --text-muted: #8a8a8a;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        /* 儿童版采用更加圆润可爱的无衬线字体 */
+        body { 
+            min-height: 100vh; 
+            display: flex; 
+            overflow-x: hidden; 
+            overflow-y: auto;
+            font-family: "Comic Sans MS", "Chalkboard SE", "PingFang SC", "Microsoft YaHei", sans-serif;
+        }
+        
+        .left-panel {
+            width: 40%; background: var(--bg-left);
+            display: flex; flex-direction: column; justify-content: space-between;
+            padding: 40px 60px; position: relative; overflow: hidden;
+        }
+
+        /* ⭐ 儿童版 Logo */
+        .logo-area { 
+            display: flex; align-items: center; gap: 12px;
+            color: white; font-weight: 700; font-size: 22px; letter-spacing: 1px;
+            z-index: 2; text-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .illustration-box {
+            position: absolute; bottom: 25%; left: 5%; width: 420px; height: 280px;
+            display: flex; justify-content: center; align-items: flex-end;
+            perspective: 600px;
+        }
+        
+        #characters-group {
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transform-origin: center bottom;
+            transform-style: preserve-3d;
+        }
+        #characters-group.stretch-neck { transform: translateY(-15px) scale(1.04); }
+        #characters-group.turn-away { transform: rotateY(180deg) translateY(10px); opacity: 0.7; }
+
+        /* ===== 角色独立动画 ===== */
+        @keyframes float-blue {
+            0%, 100% { transform: translateY(0px); }
+            25%  { transform: translateY(-8px) rotate(-1deg); }
+            50%  { transform: translateY(-12px) rotate(0deg); }
+            75%  { transform: translateY(-4px) rotate(1deg); }
+        }
+        @keyframes breathe-orange {
+            0%, 100% { transform: scaleY(1) scaleX(1); }
+            30%  { transform: scaleY(0.94) scaleX(1.03); }
+            60%  { transform: scaleY(1.05) scaleX(0.98); }
+        }
+        @keyframes sway-black {
+            0%, 100% { transform: rotate(0deg) translateX(0px); }
+            20%  { transform: rotate(2deg) translateX(2px); }
+            40%  { transform: rotate(0deg) translateX(4px); }
+            60%  { transform: rotate(-2deg) translateX(2px); }
+            80%  { transform: rotate(0deg) translateX(0px); }
+        }
+        @keyframes bounce-yellow {
+            0%, 100% { transform: translateY(0px) scaleY(1); }
+            15%  { transform: translateY(-18px) scaleY(0.85) scaleX(1.08); }
+            30%  { transform: translateY(0px) scaleY(1.1) scaleX(0.95); }
+            45%  { transform: translateY(-6px) scaleY(0.97); }
+            55%  { transform: translateY(0px) scaleY(1.02); }
+        }
+        @keyframes blink {
+            0%, 90%, 96%, 100% { transform: scaleY(1); }
+            93% { transform: scaleY(0.05); }
+        }
+
+        #char-blue   { animation: float-blue 4s ease-in-out infinite; }
+        #char-orange { animation: breathe-orange 3.5s ease-in-out infinite; transform-origin: center bottom; }
+        #char-black  { animation: sway-black 3s ease-in-out infinite; transform-origin: center bottom; }
+        #char-yellow { animation: bounce-yellow 2.8s ease-in-out infinite; transform-origin: center bottom; }
+
+        .eye-white { animation: blink 4s ease-in-out infinite; transform-origin: center center; }
+        #char-blue .eye-white   { animation-delay: 0s; }
+        #char-orange .eye-white { animation-delay: 1.3s; }
+        #char-black .eye-white  { animation-delay: 2.6s; }
+        #char-yellow .eye-white { animation-delay: 0.7s; }
+
+        /* 交互时暂停角色动画 */
+        #characters-group.stretch-neck #char-blue,
+        #characters-group.stretch-neck #char-orange,
+        #characters-group.stretch-neck #char-black,
+        #characters-group.stretch-neck #char-yellow,
+        #characters-group.turn-away #char-blue,
+        #characters-group.turn-away #char-orange,
+        #characters-group.turn-away #char-black,
+        #characters-group.turn-away #char-yellow,
+        #characters-group.stretch-neck .eye-white,
+        #characters-group.turn-away .eye-white { animation-play-state: paused; }
+        
+        /* ⭐ 底部文字 */
+        .footer-links { 
+            color: rgba(255, 255, 255, 0.8); 
+            font-size: 13px; font-weight: 500;
+            z-index: 2; 
+            letter-spacing: 1px;
+        }
+
+        /* ⭐ 右侧区域 */
+        .right-panel {
+            width: 60%; background-color: var(--bg-right);
+            display: flex; align-items: center; justify-content: center;
+            padding: 40px 20px;
+        }
+        .login-container {
+            width: 100%; max-width: 380px; padding: 20px; text-align: center;
+        }
+        .login-title {
+            font-size: 28px; font-weight: 700; color: var(--text-main);
+            margin-bottom: 6px; letter-spacing: 1px;
+        }
+        .login-sub {
+            font-size: 15px; color: var(--text-muted);
+            margin-bottom: 35px; letter-spacing: 0.5px;
+        }
+        
+        /* 圆润可爱的输入框 */
+        .input-group {
+            display: flex; align-items: center;
+            border: 2px solid var(--input-border); border-radius: 50px; /* 大圆角 */
+            padding: 0 18px; height: 52px;
+            margin-bottom: 18px;
+            transition: 0.2s; background: #ffffff;
+            box-shadow: 0 4px 10px rgba(240, 147, 251, 0.1);
+        }
+        .input-group:focus-within {
+            border-color: var(--input-focus-border);
+            box-shadow: 0 4px 15px rgba(240, 147, 251, 0.2);
+        }
+        .input-group .input-icon {
+            color: #d4a5d4; width: 22px; height: 22px; flex-shrink: 0;
+        }
+        .input-group input {
+            border: none; background: transparent; outline: none;
+            flex: 1; height: 100%;
+            font-size: 15px; color: #333333; padding-left: 12px;
+        }
+        .input-group input::placeholder { color: #d1a5c9; }
+        
+        /* 密码眼睛 */
+        .toggle-password {
+            cursor: pointer; transition: 0.2s; margin-left: 8px;
+        }
+        .toggle-password:hover { color: #c78bca; }
+
+        /* 彩色渐变按钮 */
+        .login-btn {
+            width: 100%; height: 52px; margin-top: 12px;
+            border: none; border-radius: 50px;
+            background: var(--btn-primary-bg);
+            color: #ffffff; font-size: 18px; font-weight: 700; letter-spacing: 2px;
+            cursor: pointer; transition: transform 0.15s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(253, 160, 133, 0.4);
+        }
+        .login-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(253, 160, 133, 0.5); }
+        .login-btn:active { transform: scale(0.95); }
+
+        /* 📱 移动端调整优化（建议修改的部分） */
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            /* 1. 高度从 280px 增加到 300px，给学士帽留出更多空间 */
+            .left-panel { width: 100%; height: 300px; padding: 20px; align-items: center; text-align: center; }
+            /* 2. 增加 margin-top: 15px，让小人整体往下沉一点，视觉更舒适 */
+            .illustration-box { position: relative; bottom: auto; left: auto; margin: 15px auto; transform: scale(0.8); }
+            .right-panel { width: 100%; padding: 30px 20px 40px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="left-panel">
+        <!-- 📚 童趣 Logo -->
+        <div class="logo-area">
+            📚 智趣AI学堂
+        </div>
+
+        <!-- 穿着配饰的卡通小人 -->
+        <div class="illustration-box">
+            <svg viewBox="0 0 400 300" width="100%" height="100%" style="overflow: visible;">
+                <g id="characters-group">
+                    <!-- 1. 小蓝（紫色） + 学士帽 -->
+                    <g id="char-blue">
+                        <polygon points="120,50 200,50 210,240 130,240" fill="#b79ad1" />
+                        <!-- 学士帽装饰 -->
+                        <path d="M 128,42 L 195,42 L 188,30 L 135,30 Z" fill="#f6d365" />
+                        <path d="M 140,50 L 145,80 L 145,88" stroke="#f6d365" stroke-width="2" fill="none" />
+                        <circle cx="145" cy="90" r="2" fill="#f6d365" />
+                        <!-- 眼睛 -->
+                        <circle cx="135" cy="85" r="9" fill="white" class="eye-white" />
+                        <circle cx="185" cy="85" r="9" fill="white" class="eye-white" />
+                        <circle cx="135" cy="85" r="3.5" fill="#111" class="pupil" data-range="3" />
+                        <circle cx="185" cy="85" r="3.5" fill="#111" class="pupil" data-range="3" />
+                    </g>
+                    <!-- 2. 小橙（珊瑚色） + 小眼镜 -->
+                    <g id="char-orange">
+                        <path d="M 30,240 L 180,240 A 70,70 0 0 0 30,240 Z" fill="#ffb8ba" />
+                        <!-- 圆形小眼镜 -->
+                        <circle cx="95" cy="190" r="12" fill="none" stroke="#4a4a4a" stroke-width="2" />
+                        <circle cx="115" cy="190" r="12" fill="none" stroke="#4a4a4a" stroke-width="2" />
+                        <line x1="107" y1="190" x2="103" y2="190" stroke="#4a4a4a" stroke-width="2" />
+                        <!-- 眼睛 -->
+                        <circle cx="95" cy="190" r="9" fill="white" class="eye-white" />
+                        <circle cx="115" cy="190" r="9" fill="white" class="eye-white" />
+                        <circle cx="95" cy="190" r="2.5" fill="#111" class="pupil" data-range="3" />
+                        <circle cx="115" cy="190" r="2.5" fill="#111" class="pupil" data-range="3" />
+                    </g>
+                    <!-- 3. 小黑（蓝色） + 小书本 -->
+                    <g id="char-black">
+                        <rect x="180" y="100" width="65" height="140" rx="8" fill="#83bdf5" />
+                        <!-- 胸前抱一本小书 -->
+                        <rect x="190" y="150" width="45" height="30" rx="2" fill="#ffffff" />
+                        <line x1="212" y1="150" x2="212" y2="180" stroke="#83bdf5" stroke-width="2" />
+                        <!-- 眼睛 -->
+                        <circle cx="195" cy="115" r="10" fill="white" class="eye-white" />
+                        <circle cx="225" cy="115" r="10" fill="white" class="eye-white" />
+                        <circle cx="195" cy="115" r="3" fill="#111" class="pupil" data-range="3" />
+                        <circle cx="225" cy="115" r="3" fill="#111" class="pupil" data-range="3" />
+                        <rect x="200" y="142" width="24" height="4" rx="2" fill="#111" />
+                    </g>
+                    <!-- 4. 小黄（黄色） + 火箭背带 -->
+                    <g id="char-yellow">
+                        <rect x="245" y="120" width="70" height="120" rx="35" fill="#fce38a" />
+                        <!-- 身后的小火箭喷射 -->
+                        <path d="M 315,150 L 330,130 L 345,150 L 330,190 Z" fill="#ff9a9e" />
+                        <path d="M 330,130 L 330,120" stroke="#ff9a9e" stroke-width="3" />
+                        <!-- 眼睛 -->
+                        <circle cx="265" cy="140" r="9" fill="white" class="eye-white" />
+                        <circle cx="295" cy="140" r="9" fill="white" class="eye-white" />
+                        <circle cx="265" cy="140" r="3" fill="#111" class="pupil" data-range="3" />
+                        <circle cx="295" cy="140" r="3" fill="#111" class="pupil" data-range="3" />
+                        <!-- 调皮的笑 -->
+                        <path d="M 285,165 Q 295,180 305,165" stroke="#111" stroke-width="4" fill="none" stroke-linecap="round" />
+                    </g>
+                </g>
+            </svg>
+        </div>
+
+        <div class="footer-links">每天进步一点点，知识改变未来 ✨</div>
+    </div>
+
+    <!-- ⭐ 右侧表单 -->
+    <div class="right-panel">
+        <div class="login-container">
+            <h1 class="login-title">📖 欢迎来到 AI 学堂</h1>
+            <p class="login-sub">和四位小精灵一起学习进步吧！</p>
+
+            <form>
+                <div class="input-group">
+                    <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+                    <input type="text" id="userInput" placeholder="输入你的学习昵称">
+                </div>
+                
+                <div class="input-group">
+                    <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                    <input type="password" placeholder="输入学习密码" id="passwordInput">
+                    <svg class="input-icon toggle-password" id="eyeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" onclick="togglePassword()"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                </div>
+
+                <button type="button" class="login-btn">🚀 开始学习</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const group = document.getElementById('characters-group');
+        const userInput = document.getElementById('userInput');
+        const passwordInput = document.getElementById('passwordInput');
+        const eyeIcon = document.getElementById('eyeIcon');
+
+        // 1. 聚焦偷看
+        const focusHandler = () => {
+            if(!group.classList.contains('turn-away')) {
+                group.classList.add('stretch-neck');
+            }
+        };
+        const blurHandler = () => {
+            group.classList.remove('stretch-neck');
+        };
+        
+        userInput.addEventListener('focus', focusHandler);
+        userInput.addEventListener('blur', blurHandler);
+        passwordInput.addEventListener('focus', focusHandler);
+        passwordInput.addEventListener('blur', blurHandler);
+
+        // 2. 切换密码可见状态（转身逻辑）
+        const eyeOpenSVG = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+        const eyeSlashSVG = '<path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
+
+        function togglePassword() {
+            const isVisible = passwordInput.getAttribute('type') === 'text';
+            const newType = isVisible ? 'password' : 'text';
+            passwordInput.setAttribute('type', newType);
+            eyeIcon.innerHTML = newType === 'text' ? eyeSlashSVG : eyeOpenSVG;
+
+            if (newType === 'text') {
+                group.classList.remove('stretch-neck');
+                group.classList.add('turn-away');
+            } else {
+                group.classList.remove('turn-away');
+            }
+        }
+
+        // 3. 瞳孔追踪（缓存坐标，避免高频重排）
+        const pupils = document.querySelectorAll('.pupil');
+        let eyesCache = [];
+
+        function updateEyesCache() {
+            eyesCache = [...pupils].map(p => {
+                const r = p.getBoundingClientRect();
+                return {
+                    cx: r.left + r.width / 2,
+                    cy: r.top + r.height / 2,
+                    range: parseInt(p.getAttribute('data-range')) || 3,
+                    el: p
+                };
+            });
+        }
+        updateEyesCache();
+        window.addEventListener('resize', updateEyesCache);
+
+        const handleCoordMove = (clientX, clientY) => {
+            if (group.classList.contains('turn-away')) return;
+            eyesCache.forEach(eye => {
+                let dx = clientX - eye.cx;
+                let dy = clientY - eye.cy;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist > eye.range) {
+                    dx = (dx / dist) * eye.range;
+                    dy = (dy / dist) * eye.range;
+                }
+                eye.el.style.transform = `translate(${dx}px, ${dy}px)`;
+            });
+        };
+
+        // 桌面端鼠标
+        document.addEventListener('mousemove', (e) => { handleCoordMove(e.clientX, e.clientY); });
+
+        // 手机端：手指落下立刻跟随
+        document.addEventListener('touchstart', (e) => {
+            if (e.touches && e.touches.length > 0) {
+                handleCoordMove(e.touches[0].clientX, e.touches[0].clientY);
+            }
+        }, { passive: true });
+
+        // 手机端：滑动持续跟随
+        document.addEventListener('touchmove', (e) => {
+            if (e.touches && e.touches.length > 0) {
+                handleCoordMove(e.touches[0].clientX, e.touches[0].clientY);
+            }
+        }, { passive: true });
+    </script>
+</body>
+</html>

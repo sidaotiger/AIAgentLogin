@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIAgent - 登录</title>
+    <style>
+        :root {
+            --bg-primary: #0f0f1a;
+            --bg-card: rgba(255,255,255,0.04);
+            --accent: #c9a96e;
+            --accent-glow: rgba(201,169,110,0.3);
+            --text-primary: #e8e4dc;
+            --text-muted: #8a8578;
+            --border: rgba(255,255,255,0.08);
+            --input-bg: rgba(255,255,255,0.04);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: "Cormorant Garamond", "Noto Serif SC", "STSong", serif;
+            min-height: 100vh; display: flex; overflow-x: hidden;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        /* ===== 左侧：角色展示 ===== */
+        .left-panel {
+            width: 42%; position: relative; overflow: hidden;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            background: radial-gradient(ellipse at 60% 50%, rgba(201,169,110,0.06) 0%, transparent 70%),
+                        var(--bg-primary);
+        }
+        .left-panel::before {
+            content: ''; position: absolute; top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle at 30% 60%, rgba(201,169,110,0.04) 0%, transparent 40%),
+                        radial-gradient(circle at 70% 40%, rgba(180,150,120,0.03) 0%, transparent 35%);
+            animation: ambientShift 12s ease-in-out infinite;
+        }
+        @keyframes ambientShift {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(1%, -0.5%) rotate(0.5deg); }
+            66% { transform: translate(-0.5%, 1%) rotate(-0.3deg); }
+        }
+
+        .logo-area {
+            position: absolute; top: 40px; left: 60px; z-index: 2;
+            display: flex; align-items: center; gap: 14px;
+        }
+        .logo-mark {
+            width: 38px; height: 38px;
+            border: 1.5px solid var(--accent);
+            display: flex; align-items: center; justify-content: center;
+            transform: rotate(45deg);
+        }
+        .logo-mark svg { transform: rotate(-45deg); color: var(--accent); }
+        .logo-text {
+            font-size: 22px; font-weight: 300; letter-spacing: 4px; color: var(--text-primary);
+            text-transform: uppercase;
+        }
+        .logo-text span { color: var(--accent); font-weight: 600; }
+
+        .illustration-box {
+            width: 380px; height: 320px; position: relative;
+            display: flex; align-items: center; justify-content: center;
+            z-index: 1;
+        }
+        #characters-group {
+            transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transform-origin: center center;
+        }
+        #characters-group.stretch-neck { transform: scale(1.06) translateY(-8px); }
+        #characters-group.turn-away { transform: rotateY(180deg); opacity: 0.5; }
+
+        /* 粒子光环 */
+        .particle-ring {
+            position: absolute; border-radius: 50%;
+            border: 1px solid rgba(201,169,110,0.15);
+            animation: ringPulse 6s ease-in-out infinite;
+        }
+        .particle-ring:nth-child(1) { width: 200px; height: 200px; animation-delay: 0s; }
+        .particle-ring:nth-child(2) { width: 280px; height: 280px; animation-delay: -2s; }
+        .particle-ring:nth-child(3) { width: 360px; height: 360px; animation-delay: -4s; }
+        @keyframes ringPulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.08); opacity: 1; }
+        }
+
+        @keyframes floatCrystal {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            33% { transform: translateY(-6px) rotate(1deg); }
+            66% { transform: translateY(-3px) rotate(-1deg); }
+        }
+        @keyframes shimmerCrystal {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+        @keyframes glowPulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+        @keyframes blink {
+            0%, 92%, 98%, 100% { transform: scaleY(1); }
+            95% { transform: scaleY(0.05); }
+        }
+
+        #char-crystal1 { animation: floatCrystal 6s ease-in-out infinite; transform-origin: center center; }
+        #char-crystal2 { animation: shimmerCrystal 5s ease-in-out infinite; transform-origin: center center; }
+        #char-crystal3 { animation: floatCrystal 7s ease-in-out infinite 1s; transform-origin: center center; }
+        #char-crystal4 { animation: shimmerCrystal 4.5s ease-in-out infinite 0.5s; transform-origin: center center; }
+
+        .eye-premium { animation: blink 5s ease-in-out infinite; transform-origin: center center; }
+        #char-crystal1 .eye-premium { animation-delay: 0s; }
+        #char-crystal2 .eye-premium { animation-delay: 1.5s; }
+        #char-crystal3 .eye-premium { animation-delay: 3s; }
+        #char-crystal4 .eye-premium { animation-delay: 0.8s; }
+
+        #characters-group.stretch-neck #char-crystal1,
+        #characters-group.stretch-neck #char-crystal2,
+        #characters-group.stretch-neck #char-crystal3,
+        #characters-group.stretch-neck #char-crystal4,
+        #characters-group.turn-away #char-crystal1,
+        #characters-group.turn-away #char-crystal2,
+        #characters-group.turn-away #char-crystal3,
+        #characters-group.turn-away #char-crystal4,
+        #characters-group.stretch-neck .eye-premium,
+        #characters-group.turn-away .eye-premium { animation-play-state: paused; }
+
+        .footer-tag {
+            position: absolute; bottom: 40px; left: 60px; z-index: 2;
+            font-size: 11px; letter-spacing: 3px; color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        /* ===== 右侧：表单 ===== */
+        .right-panel {
+            width: 58%; display: flex; align-items: center; justify-content: center;
+            background: radial-gradient(ellipse at 30% 50%, rgba(201,169,110,0.03) 0%, transparent 60%),
+                        var(--bg-primary);
+            padding: 40px;
+        }
+        .login-card {
+            width: 100%; max-width: 380px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 48px 40px;
+            border-radius: 2px;
+        }
+        .login-title {
+            font-size: 28px; font-weight: 300; letter-spacing: 2px;
+            margin-bottom: 4px; color: var(--text-primary);
+        }
+        .login-sub {
+            font-size: 13px; color: var(--text-muted); letter-spacing: 1px;
+            margin-bottom: 40px;
+        }
+        .input-group {
+            position: relative; margin-bottom: 24px;
+        }
+        .input-group label {
+            display: block; font-size: 11px; letter-spacing: 2px;
+            color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase;
+        }
+        .input-group input {
+            width: 100%; padding: 14px 0;
+            background: transparent; border: none; border-bottom: 1px solid var(--border);
+            color: var(--text-primary); font-size: 15px; font-family: inherit;
+            outline: none; transition: border-color 0.3s;
+        }
+        .input-group input:focus { border-bottom-color: var(--accent); }
+        .input-group input::placeholder { color: rgba(255,255,255,0.15); }
+
+        .password-wrapper { position: relative; }
+        .toggle-password {
+            position: absolute; right: 4px; top: 50%; transform: translateY(-50%);
+            cursor: pointer; color: var(--text-muted); transition: color 0.3s;
+            background: none; border: none; padding: 4px;
+        }
+        .toggle-password:hover { color: var(--accent); }
+        .toggle-password svg { width: 20px; height: 20px; }
+
+        .login-btn {
+            width: 100%; padding: 15px; margin-top: 16px;
+            background: transparent; border: 1px solid var(--accent);
+            color: var(--accent); font-size: 13px; font-weight: 600;
+            letter-spacing: 4px; text-transform: uppercase;
+            cursor: pointer; font-family: inherit;
+            transition: all 0.3s ease;
+        }
+        .login-btn:hover { background: var(--accent); color: var(--bg-primary); }
+
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            .left-panel { width: 100%; height: 260px; }
+            .illustration-box { transform: scale(0.7); }
+            .logo-area { top: 20px; left: 20px; }
+            .footer-tag { bottom: 15px; left: 20px; }
+            .right-panel { width: 100%; padding: 30px 20px; }
+            .login-card { padding: 32px 24px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="left-panel">
+        <div class="logo-area">
+            <div class="logo-mark">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3 7h7l-5.5 4 2 7L12 16l-6.5 4 2-7L2 9h7z"/></svg>
+            </div>
+            <span class="logo-text"><span>A</span>gent</span>
+        </div>
+
+        <div class="illustration-box">
+            <div class="particle-ring"></div>
+            <div class="particle-ring"></div>
+            <div class="particle-ring"></div>
+            <svg viewBox="0 0 400 340" width="100%" height="100%">
+                <g id="characters-group">
+                    <!-- 晶石1：菱形翡翠 -->
+                    <g id="char-crystal1">
+                        <polygon points="160,40 210,80 190,260 130,260 110,80" fill="rgba(180,200,180,0.6)" stroke="rgba(200,220,200,0.3)" stroke-width="0.5"/>
+                        <circle cx="155" cy="80" r="5" fill="#e8e4dc" class="eye-premium"/>
+                        <circle cx="175" cy="80" r="5" fill="#e8e4dc" class="eye-premium"/>
+                        <circle cx="155" cy="80" r="2" fill="#0f0f1a" class="pupil" data-range="2"/>
+                        <circle cx="175" cy="80" r="2" fill="#0f0f1a" class="pupil" data-range="2"/>
+                    </g>
+                    <!-- 晶石2：玫瑰金三角 -->
+                    <g id="char-crystal2">
+                        <polygon points="60,260 210,260 120,120" fill="rgba(201,169,110,0.25)" stroke="rgba(201,169,110,0.3)" stroke-width="0.5"/>
+                        <circle cx="128" cy="180" r="5" fill="#e8e4dc" class="eye-premium"/>
+                        <circle cx="148" cy="180" r="5" fill="#e8e4dc" class="eye-premium"/>
+                        <circle cx="128" cy="180" r="2" fill="#0f0f1a" class="pupil" data-range="2"/>
+                        <circle cx="148" cy="180" r="2" fill="#0f0f1a" class="pupil" data-range="2"/>
+                    </g>
+                    <!-- 晶石3：深色长柱 -->
+                    <g id="char-crystal3">
+                        <polygon points="200,100 250,90 260,260 200,260" fill="rgba(60,60,80,0.7)" stroke="rgba(120,120,150,0.2)" stroke-width="0.5"/>
+                        <circle cx="218" cy="120" r="5" fill="#e8e4dc" class="eye-premium"/>
+                        <circle cx="238" cy="118" r="5" fill="#e8e4dc" class="eye-premium"/>
+                        <circle cx="218" cy="120" r="2" fill="#0f0f1a" class="pupil" data-range="2"/>
+                        <circle cx="238" cy="118" r="2" fill="#0f0f1a" class="pupil" data-range="2"/>
+                    </g>
+                    <!-- 晶石4：温暖琥珀 -->
+                    <g id="char-crystal4">
+                        <polygon points="255,130 310,120 320,260 255,260" fill="rgba(200,160,100,0.35)" stroke="rgba(220,180,120,0.3)" stroke-width="0.5"/>
+                        <circle cx="278" cy="145" r="5" fill="#e8e4dc" class="eye-premium"/>
+                        <circle cx="298" cy="142" r="5" fill="#e8e4dc" class="eye-premium"/>
+                        <circle cx="278" cy="145" r="2" fill="#0f0f1a" class="pupil" data-range="2"/>
+                        <circle cx="298" cy="142" r="2" fill="#0f0f1a" class="pupil" data-range="2"/>
+                    </g>
+                </g>
+            </svg>
+        </div>
+
+        <div class="footer-tag">Refined Intelligence</div>
+    </div>
+
+    <div class="right-panel">
+        <div class="login-card">
+            <h1 class="login-title">Welcome</h1>
+            <p class="login-sub">Sign in to continue</p>
+            <form>
+                <div class="input-group">
+                    <label>Account</label>
+                    <input type="text" id="userInput" placeholder="Your account">
+                </div>
+                <div class="input-group">
+                    <label>Password</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="passwordInput" placeholder="········">
+                        <button type="button" class="toggle-password" id="eyeIcon" onclick="togglePassword()">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                        </button>
+                    </div>
+                </div>
+                <button type="button" class="login-btn">Sign In</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const group = document.getElementById('characters-group');
+        const userInput = document.getElementById('userInput');
+        const passwordInput = document.getElementById('passwordInput');
+        const eyeIcon = document.getElementById('eyeIcon');
+
+        const focusHandler = () => {
+            if (!group.classList.contains('turn-away')) group.classList.add('stretch-neck');
+        };
+        const blurHandler = () => group.classList.remove('stretch-neck');
+        userInput.addEventListener('focus', focusHandler);
+        userInput.addEventListener('blur', blurHandler);
+        passwordInput.addEventListener('focus', focusHandler);
+        passwordInput.addEventListener('blur', blurHandler);
+
+        const eyeOpen = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+        const eyeSlash = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
+
+        function togglePassword() {
+            const isVisible = passwordInput.getAttribute('type') === 'text';
+            const newType = isVisible ? 'password' : 'text';
+            passwordInput.setAttribute('type', newType);
+            eyeIcon.innerHTML = newType === 'text' ? eyeSlash : eyeOpen;
+            if (newType === 'text') {
+                group.classList.remove('stretch-neck');
+                group.classList.add('turn-away');
+            } else {
+                group.classList.remove('turn-away');
+            }
+        }
+
+        const pupils = document.querySelectorAll('.pupil');
+        let eyesCache = [];
+        function updateEyesCache() {
+            eyesCache = [...pupils].map(p => {
+                const r = p.getBoundingClientRect();
+                return { cx: r.left + r.width / 2, cy: r.top + r.height / 2, range: parseInt(p.getAttribute('data-range')) || 2, el: p };
+            });
+        }
+        updateEyesCache();
+        window.addEventListener('resize', updateEyesCache);
+
+        const handleCoordMove = (cx, cy) => {
+            if (group.classList.contains('turn-away')) return;
+            eyesCache.forEach(e => {
+                let dx = cx - e.cx, dy = cy - e.cy;
+                const d = Math.sqrt(dx * dx + dy * dy);
+                if (d > e.range) { dx = (dx / d) * e.range; dy = (dy / d) * e.range; }
+                e.el.style.transform = `translate(${dx}px, ${dy}px)`;
+            });
+        };
+        document.addEventListener('mousemove', e => handleCoordMove(e.clientX, e.clientY));
+        document.addEventListener('touchstart', e => { if (e.touches[0]) handleCoordMove(e.touches[0].clientX, e.touches[0].clientY); }, { passive: true });
+        document.addEventListener('touchmove', e => { if (e.touches[0]) handleCoordMove(e.touches[0].clientX, e.touches[0].clientY); }, { passive: true });
+    </script>
+</body>
+</html>
